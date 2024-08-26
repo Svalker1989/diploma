@@ -225,11 +225,11 @@ kubectl config set-context prod --namespace=app-prod \
 Деплоим наше приложение:  
 `kubectl apply -f /home/str/diploma/nginx_app/nginx_app_deploy.yaml`  
 Манифест:  
-[nginx_app_deploy.yaml]()  
+[nginx_app_deploy.yaml](https://github.com/Svalker1989/diploma/blob/master/nginx_app/nginx_app_deploy.yaml)  
 Сервис для приложения с nodeport:  
-[nginx_app_svc.yaml]()  
+[nginx_app_svc.yaml](https://github.com/Svalker1989/diploma/blob/master/nginx_app/nginx_app_svc.yaml)  
 Результат:  
-![3]()  
+![3](https://github.com/Svalker1989/diploma/blob/master/3.PNG)  
 
 ---
 ### Установка и настройка CI/CD
@@ -267,15 +267,15 @@ helm upgrade --install nginx-app gitlab/gitlab-agent \
 - Установка gitlab runner в кластер k8s  
 `helm install --namespace gitlab --create-namespace gitlab-runner -f values.yaml gitlab/gitlab-runner`  
 Файл, который содержит gitlabUrl и runnerToken (gitlab->settings->CI/CD->Runners->new runner):  
-[values.yaml]()
+[values.yaml](https://github.com/Svalker1989/diploma/blob/master/gitlab/values.yaml)
 - Настраиваем CI/CD:  
-[gitlab-ci.yaml]()  
+[gitlab-ci.yaml](https://github.com/Svalker1989/diploma/blob/master/nginx_app/.gitlab-ci.yml)  
 Манифест для деплоя:  
-[nginx_app_deploy.yaml]()  
+[nginx_app_deploy.yaml](https://github.com/Svalker1989/diploma/blob/master/nginx_app/nginx_app_deploy.yaml)  
 Сервис для приложения с nodeport:  
-[nginx_app_svc.yaml]()  
+[nginx_app_svc.yaml](https://github.com/Svalker1989/diploma/blob/master/nginx_app/nginx_app_svc.yaml)  
 Результат работы приложения:  
-![4]()  
+![4](https://github.com/Svalker1989/diploma/blob/master/4.PNG)  
 
 ---
 ## Что необходимо для сдачи задания?
