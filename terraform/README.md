@@ -40,9 +40,9 @@
 2. Подготовьте [backend](https://www.terraform.io/docs/language/settings/backends/index.html) для Terraform:  
    а. Рекомендуемый вариант: S3 bucket в созданном ЯО аккаунте(создание бакета через TF)
    б. Альтернативный вариант:  [Terraform Cloud](https://app.terraform.io/)  
-[bucket-s3.tf]()  
+[bucket-s3.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/bucket-s3.tf)  
 3. Создайте VPC с подсетями в разных зонах доступности.
-[vpc_network.tf]()  
+[vpc_network.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/vpc_network.tf)  
 4. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
 5. В случае использования [Terraform Cloud](https://app.terraform.io/) в качестве [backend](https://www.terraform.io/docs/language/settings/backends/index.html) убедитесь, что применение изменений успешно проходит, используя web-интерфейс Terraform cloud.
 
@@ -61,7 +61,7 @@
 1. Рекомендуемый вариант: самостоятельная установка Kubernetes кластера.  
    а. При помощи Terraform подготовить как минимум 3 виртуальных машины Compute Cloud для создания Kubernetes-кластера. Тип виртуальной машины следует выбрать самостоятельно с учётом требовании к производительности и стоимости. Если в дальнейшем поймете, что необходимо сменить тип инстанса, используйте Terraform для внесения изменений.  
 Манифест для создания инфраструктуры в YC:  
-[main.tf]()  
+[main.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/main.tf)  
    б. Подготовить [ansible](https://www.ansible.com/) конфигурации, можно воспользоваться, например [Kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/)  
    `git clone https://github.com/kubernetes-sigs/kubespray.git --branch release-2.25`
    в. Задеплоить Kubernetes на подготовленные ранее инстансы, в случае нехватки каких-либо ресурсов вы всегда можете создать их при помощи Terraform.
@@ -87,7 +87,8 @@ python3.10 -m venv $VENVDIR
 source $VENVDIR/bin/activate
 cd $KUBESPRAYDIR
 pip install -U -r requirements.txt
-```
+```  
+[requirements.txt](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/ansible/requirements.txt)  
 Управление виртуальными пространствами:  
 Показать все виртуальные простарнства python  
 `sudo find $HOME -name "*activate" -type f`  
@@ -95,7 +96,7 @@ pip install -U -r requirements.txt
 `sudo rm -rf kubespray-venv`
 
    3. Генерируем инвентори файл и запускаем плейбук kubespray cluster.yaml
-[hosts.yaml]()  
+[hosts.yaml](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/ansible/hosts.yaml)  
 Особенность:  Публичный адрес только **ansible_host**
 **ansible_host** - The IP address Ansible uses to connect to this node. Use the private IP if accessible, otherwise the public IP.  
 **ip** - The internal IP address for Kubernetes inter-node communication. Should typically be the private IP.  
@@ -113,7 +114,8 @@ exit
 Копируем кубконфиг на локальную ВМ:  
 `scp $USERNAME@$IP_CONTROLLER_0:/etc/kubernetes/admin.conf kubespray-do.conf`  
 Кубконфиг:  
-[kubespray-do.conf]()  
+[kubespray-do.conf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/kubespray-do.conf)  
+P.S. в процессе выполнения заданий адрес мастера менялся, поэтому может отличаться в разных файлах.  
 Заменяем значение server публичным IP адресом мастера:
 ```
 apiVersion: v1
@@ -124,7 +126,8 @@ clusters:
   name: cluster.local
 ...
 ```
-`The external IP address will be accepted in the TLS negotiation as we added the controllers external IP addresses in the SSL certificate configuration.` - ВОТ ЭТО У МЕНЯ НЕ ОТРАБОТАЛО, В SSL EXTERNAL IP НЕ ПРОПИСАЛСЯ И К КУБЕРУ ПОЛУЧАЕТСЯ ПОДКЛЮЧИТСЬЯ ТОЛЬКО БЕЗ ПРОВЕРКИ TLS --insecure-skip-tls-verify  
+Для того чтобы подключаться удаленно к внешнему IP мастера необходимо его добавить в переменную supplementary_addresses_in_ssl_keys в .../group_vars/k8s_cluster/k8s-cluster.yml
+или для пропуска проверки сертификата использовать --insecure-skip-tls-verify  для kubectl.  
 Добавляем в bash.rc `export KUBECONFIG=$PWD/kubespray-do.conf`  
 Проверяем наш кластер:  
 `kubectl get pods --all-namespaces --insecure-skip-tls-verify`  
@@ -136,11 +139,9 @@ clusters:
 
 1. Работоспособный Kubernetes кластер.
 2. В файле `~/.kube/config` находятся данные для доступа к кластеру.  
-[kubespray-do.conf]()  
+[kubespray-do.conf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/kubespray-do.conf)  
 3. Команда `kubectl get pods --all-namespaces` отрабатывает без ошибок.  
-![1]()  
-настройка TLS
-/etc/kubernetes/pki/ca.crt
+![1](https://github.com/Svalker1989/diploma/blob/master/1.PNG)  
 ---
 ### Создание тестового приложения
 
@@ -204,10 +205,10 @@ $ kubectl apply -f manifests/
 Ожидаемый результат:
 1. Git репозиторий с конфигурационными файлами для настройки Kubernetes.  
 Манифесты:  
-[monitoring]()  
+[monitoring](https://github.com/Svalker1989/diploma/tree/master/monitoring/manifests)  
 2. Http доступ к web интерфейсу grafana.
 3. Дашборды в grafana отображающие состояние Kubernetes кластера.  
-![2]()  
+![2](https://github.com/Svalker1989/diploma/blob/master/2.PNG)  
 4. Http доступ к тестовому приложению.
 Создал новый неймспейс для приложения:  
 `kubectl create namespace app-prod`  
