@@ -43,7 +43,7 @@
      
 Манифест для создания бакета:  
 [bucket-s3.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/bucket-s3.tf)  
-4. Создайте VPC с подсетями в разных зонах доступности.
+4. Создайте VPC с подсетями в разных зонах доступности.  
 [vpc_network.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/vpc_network.tf)  
 5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
 6. В случае использования [Terraform Cloud](https://app.terraform.io/) в качестве [backend](https://www.terraform.io/docs/language/settings/backends/index.html) убедитесь, что применение изменений успешно проходит, используя web-интерфейс Terraform cloud.
