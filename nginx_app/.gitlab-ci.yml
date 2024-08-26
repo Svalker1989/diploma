@@ -1,0 +1,37 @@
+stages:
+  - build
+  - deploy
+
+build_image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  before_script:
+    - mkdir -p /kaniko/.docker
+    #авторизация а реджистри
+    - echo "{\"auths\":{\"${DOCKER_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${DOCKERHUB_USER}" "${DOCKERHUB_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - cat /kaniko/.docker/config.json
+  script:
+    #собираем докерфайл и пушим в реджистри, пушим только если у коммита есть тэг
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+  rules:
+    - if: $CI_COMMIT_TAG
+#деплоим в наш кубер кластер если у коммита есть тэг
+deploy:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  script:
+   # - kubectl config get-contexts
+    - kubectl config use-context svalker/nginx-app:nginx-app
+    - kubectl apply -f nginx_app_deploy.yaml
+    - kubectl apply -f nginx_app_svc.yaml
+  rules:
+    - if: $CI_COMMIT_TAG
