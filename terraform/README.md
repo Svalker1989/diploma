@@ -65,8 +65,8 @@
 Манифест для создания инфраструктуры в YC:  
 [main.tf](https://github.com/Svalker1989/diploma/blob/master/terraform/Kuber_cluster/main.tf)  
    б. Подготовить [ansible](https://www.ansible.com/) конфигурации, можно воспользоваться, например [Kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/)  
-   `git clone https://github.com/kubernetes-sigs/kubespray.git --branch release-2.25`
-   в. Задеплоить Kubernetes на подготовленные ранее инстансы, в случае нехватки каких-либо ресурсов вы всегда можете создать их при помощи Terraform.
+   `git clone https://github.com/kubernetes-sigs/kubespray.git --branch release-2.25`  
+   в. Задеплоить Kubernetes на подготовленные ранее инстансы, в случае нехватки каких-либо ресурсов вы всегда можете создать их при помощи Terraform.  
    Подготовка Ansible:  
    | Ansible Version |	Python Version |  
    | >= 2.16.4       |	3.10-3.12 |  
